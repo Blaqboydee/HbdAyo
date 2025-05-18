@@ -41,21 +41,48 @@
 
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 2rem;
+      color: #b3acbb;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      -webkit-background-clip: text;
+      /* -webkit-text-fill-color: transparent; */
+      margin-bottom: 20px;
     }
 
-    #messages {
+    button {
+      background: linear-gradient(135deg, #ff6ec4, #7873f5);
+      border: none;
+      color: white;
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1rem;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      font-family: "Poppins", sans-serif;
+
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
+    }
+
+ 
+   
+
+    #messages, #voicemessages {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 10px;
       max-width: 600px;
       margin: 0 auto;
       padding-bottom: 2rem;
-      max-height: 70vh;
+      max-height: 550px;
       overflow-y: auto;
     }
 
-    #messages::-webkit-scrollbar{
+    #messages::-webkit-scrollbar, #voicemessages::-webkit-scrollbar{
         display: none;
     }
 
@@ -95,6 +122,15 @@
       line-height: 20px;
     }
 
+    audio {
+  /* width: 100%; */
+  /* width: 400px; */
+  border-radius: 10px;
+  background-color: #f0f0f0;
+  padding: 8px;
+}
+
+
     @media (max-width: 600px) {
       h1 {
         font-size: 1.8rem;
@@ -117,15 +153,18 @@
   <div class="content">
     <h1>Happy Birthday Ayomikun 🎉</h1>
 
-    <div id="messages">
-    
-     
-    </div>
+    <button onclick="showTexts()">Texts</button>
+    <button onclick="showVoiceMessages()">Voice Messages</button>
 
 
-      <div id="voicemessages">
-     
+    <div id="container">
+         <div id="messages"></div>
+
+       <div id="voicemessages" style="display: none;"></div>
+
     </div>
+
+ 
   </div>
 </body>
 </html>
@@ -148,17 +187,35 @@
   const db = firebase.database(); 
 
   console.log(db); 
+  const messagesbox = document.getElementById("messages")
+  const voiceMessagesBox = document.getElementById("voicemessages")
+
+
+  function showTexts() {
+    voiceMessagesBox.style.display = "none"
+    messagesbox.style.display = 'flex'
+
+  }
+
+  function showVoiceMessages() {
+    messagesbox.style.display = 'none'
+    voiceMessagesBox.style.display = "flex"
+
+
+  }
+
 
 
   const messagesRef = db.ref("messages");
   const voicemessageRef = db.ref("voiceMessages")
 
-  const messagesbox = document.getElementById("messages")
-  const voiceMessagesBox = document.getElementById("voicemessages")
 
   const senderName = document.querySelector(".sender-name");
   const senderMessage = document.querySelector(".sender-message");
   const senderimage = document.getElementById("senderpic");
+
+  
+
 
 
   messagesRef.once("value").then((snapshot) => {
@@ -191,8 +248,9 @@
 
              voiceMessagesBox.innerHTML += `
              <div class="message-card">
+        <img id="senderpic" src=${voicemessageObj.imageUrl} alt="Sender Image" />
         <div class="message-content">
-          <div class="sender-name">${voicemessageObj.sendersName}</div>
+          <div class="sender-name">${voicemessageObj.voicesendersName}</div>
           <div class="sender-message"></div>
     <audio src="${voicemessageObj.audioUrl}" controls></audio>
 
@@ -201,7 +259,7 @@
           `
               
   
-            console.log(`Name: ${voicemessageObj.sendersName}, Message: ${voicemessageObj.audioUrl}` );
+            console.log(`Name: ${voicemessageObj.voicesendersName}, Message: ${voicemessageObj.audioUrl}` );
         });
     } else {
         console.log("No messages found.");
