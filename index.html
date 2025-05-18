@@ -132,51 +132,106 @@ stop_circle
   };
 
   // 🎙️ Audio Recording Variables
+
   let mediaRecorder;
-  let audioChunks = [];
-  let audioRecorded = false;
+let audioChunks = [];
+let audioRecorded = false;
 
-  const recordBtn = document.getElementById("recordBtn");
-  const stopBtn = document.getElementById("stopBtn");
-  const sendBtn = document.getElementById("sendBtn");
-  const audioPlayer = document.getElementById("audioPlayer");
+const recordBtn = document.getElementById("recordBtn");
+const stopBtn = document.getElementById("stopBtn");
+const sendBtn = document.getElementById("sendBtn");
+const audioPlayer = document.getElementById("audioPlayer");
 
-  recordBtn.onclick = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream);
-    audioChunks = [];
+recordBtn.onclick = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-    mediaRecorder.ondataavailable = (e) => {
-      audioChunks.push(e.data);
-    };
+  // Determine the best supported MIME type
+  let mimeType = "";
+  if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+    mimeType = "audio/webm;codecs=opus";
+  } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+    mimeType = "audio/webm";
+  } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+    mimeType = "audio/mp4";
+  } else {
+    mimeType = ""; // Let the browser decide
+  }
 
-    mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-      audioPlayer.src = URL.createObjectURL(audioBlob);
-      audioPlayer.style.display = "block";
-      audioRecorded = true;
-      // sendBtn.disabled = false;
+  // Initialize MediaRecorder with appropriate MIME type
+  mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+  audioChunks = [];
 
-      // Save audio blob for upload
-      sendBtn.audioBlob = audioBlob;
-    };
-
-    mediaRecorder.start();
-    recordBtn.disabled = true;
-    recordBtn.innerHTML = `<span class="material-symbols-outlined">
-radio_button_checked
-</span>Recording..`
-    stopBtn.disabled = false;
+  mediaRecorder.ondataavailable = (e) => {
+    audioChunks.push(e.data);
   };
 
-  stopBtn.onclick = () => {
-    mediaRecorder.stop();
-    recordBtn.disabled = false;
-    recordBtn.innerHTML = `<span class="material-symbols-outlined">
-radio_button_checked
-</span>Start Recording`;
-    stopBtn.disabled = true;
+  mediaRecorder.onstop = () => {
+    const audioBlob = new Blob(audioChunks, { type: mimeType || "audio/webm" });
+
+    console.log("Blob type:", audioBlob.type);
+    console.log("Blob size:", audioBlob.size);
+
+    if (audioBlob.size === 0) {
+      alert("Recording failed or is empty. Try another browser or check permissions.");
+      return;
+    }
+
+    audioPlayer.src = URL.createObjectURL(audioBlob);
+    audioPlayer.style.display = "block";
+
+    audioRecorded = true;
+
+    // Save blob for uploading later
+    sendBtn.audioBlob = audioBlob;
   };
+
+  mediaRecorder.start();
+  recordBtn.disabled = true;
+  recordBtn.innerHTML = `
+    <span class="material-symbols-outlined">radio_button_checked</span>
+    Recording..
+  `;
+  stopBtn.disabled = false;
+};
+
+stopBtn.onclick = () => {
+  mediaRecorder.stop();
+
+  recordBtn.disabled = false;
+  recordBtn.innerHTML = `
+    <span class="material-symbols-outlined">radio_button_checked</span>
+    Start Recording
+  `;
+  stopBtn.disabled = true;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
 
   async function send() {
     sendBtn.disabled = true;
