@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Recorder</title>
+</head>
+<body>
+  <h2>Camera Recorder</h2>
+  <video id="preview" autoplay></video>
+  <br />
+  <button onclick="startRecording()">Start Recording</button>
+  <button onclick="stopRecording()">Stop Recording</button>
+  <a id="downloadLink" style="display:none;">Download Video</a>
+
+  <script>
+    let mediaRecorder;
+    let recordedChunks = [];
+
+    async function startRecording() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    const videoElement = document.getElementById('preview');
+videoElement.srcObject = stream;
+videoElement.muted = true; // 👈 This prevents the echo
+
+
+      recordedChunks = [];
+      mediaRecorder = new MediaRecorder(stream);
+
+      mediaRecorder.ondataavailable = function (e) {
+        if (e.data.size > 0) {
+          recordedChunks.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = function () {
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const downloadLink = document.getElementById('downloadLink');
+        downloadLink.href = url;
+        downloadLink.download = 'recorded-video.webm';
+        downloadLink.textContent = 'Download Video';
+        downloadLink.style.display = 'inline';
+      };
+
+      mediaRecorder.start();
+    }
+
+    function stopRecording() {
+      if (mediaRecorder) {
+        mediaRecorder.stop();
+        let tracks = document.getElementById('preview').srcObject.getTracks();
+        tracks.forEach(track => track.stop()); // stop webcam
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <video id="preview" autoplay></video>
+<br>
+<button onclick="startRecording()">Start Recording</button>
+<button onclick="stopRecording()">Stop Recording</button>
+<br>
+<video id="playback" controls style="display: none;"></video>
+  <a id="downloadLink" style="display:none;">Download Video</a>
+<button onclick="uploadVideo()">Upload</button>
+
+
+</body>
+</html> -->
