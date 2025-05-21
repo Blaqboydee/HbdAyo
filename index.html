@@ -407,6 +407,7 @@ stopBtn.onclick = () => {
 let videorecorder;
 let recordedChunks = [];
 let videoBlob = null;
+ let videoMimeType;
 
 async function startRecording() {
   const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -415,6 +416,19 @@ async function startRecording() {
   videoElement.srcObject = stream;
   videoElement.muted = true;
   startRecordingBtn.innerText = "🎬 Recording..."
+
+
+  videoMimeType = "";
+  if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+    videoMimeType = "video/webm;codecs=vp9";
+  } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
+    videoMimeType = "video/webm;codecs=vp8";
+  } else if (MediaRecorder.isTypeSupported("video/webm")) {
+    videoMimeType = "video/webm";
+  } else {
+    videoMimeType = ""; // Let browser decide
+  }
+
 
 
   recordedChunks = [];
@@ -429,6 +443,19 @@ async function startRecording() {
   videorecorder.start();
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 function stopRecording() {
   if (!videorecorder) return;
 
@@ -436,27 +463,11 @@ function stopRecording() {
 
   startRecordingBtn.innerText = "🎬 Start Recording"
 
-videorecorder.onstop = () => {
-  let videoMimeType = "";
+  videorecorder.onstop = () => {
 
-if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
-  videoMimeType = "video/webm;codecs=vp9";
-} else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
-  videoMimeType = "video/webm;codecs=vp8";
-} else if (MediaRecorder.isTypeSupported("video/webm")) {
-  videoMimeType = "video/webm";
-} else if (MediaRecorder.isTypeSupported("video/mp4")) {
-  videoMimeType = "video/mp4";
-} else {
-  videoMimeType = ""; // Let browser decide
-}
+    
 
-const videorecorder = new MediaRecorder(stream, { mimeType: videoMimeType });
-
-
-
-
-
+  
   // Create a Blob from the recorded data
   // videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
   videoBlob = new Blob(recordedChunks, { type: videoMimeType });
