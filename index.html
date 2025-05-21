@@ -459,6 +459,11 @@ videorecorder.onstop = () => {
 
 }
 
+function convertToMp4Url(webmUrl) {
+  return webmUrl
+    .replace('/upload/', '/upload/f_mp4/')
+    .replace(/\.\w+$/, '.mp4'); // replaces .mkv or .webm or any extension with .mp4
+}
 
 
 
@@ -501,33 +506,26 @@ async function uploadVideo() {
     });
 
     const data = await response.json();
-    if (response.ok) {
-      console.log("Uploaded to Cloudinary:", data.secure_url);
-      const videoURL = data.secure_url;
-    
-        const messageData = {
-        videosendersName,
-        videoURL,
-        imageUrl
-      };
+ if (response.ok) {
+  console.log("Uploaded to Cloudinary:", data.secure_url);
+  const webmUrl = data.secure_url;
+  const videoURL = convertToMp4Url(webmUrl); // Get .mp4 preview version
 
+  const messageData = {
+    videosendersName,
+    videoURL,
+    imageUrl
+  };
 
-      const videomessageRef = db.ref("videoMessages").push();
-      await videomessageRef.set(messageData);
+  const videomessageRef = db.ref("videoMessages").push();
+  await videomessageRef.set(messageData);
 
-      alert(`Ayo will receive your voice message, thanks ${videosendersName}! ❤️`);
-    uploadBtn.innerText = "Send Video"
-    uploadBtn.disabled = false
-    document.getElementById("videosendersName").value = "";
-    location.reload()
-    // const videoElement = document.getElementById('videoElement');
-    // videoElement.src = "";
-    // videoElement.load();
-
-    // const clone = videoElement.cloneNode(true);
-    // videoElement.parentNode.replaceChild(clone, videoElement)
-    document.getElementById("imageInput").value = "";
-
+  alert(`Ayo will receive your voice message, thanks ${videosendersName}! ❤️`);
+  uploadBtn.innerText = "Send Video"
+  uploadBtn.disabled = false
+  document.getElementById("videosendersName").value = "";
+  location.reload();
+  document.getElementById("imageInput").value = "";
 
     } else {
       console.error("Upload error:", data);
