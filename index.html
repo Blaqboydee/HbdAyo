@@ -25,7 +25,7 @@
         <div class="buttons">
         <button onclick="showTextForm()"><span class="material-symbols-outlined">mail</span> Text Message</button>
         <button onclick="showVoiceForm()"><span class="material-symbols-outlined">mic</span> Voice Note</button>
-        <button onclick="showVideoForm()"><span class="material-symbols-outlined">mic</span> Video Note</button>
+        <!-- <button onclick="showVideoForm()"><span class="material-symbols-outlined">mic</span> Video Note</button> -->
 
 
 
@@ -331,7 +331,8 @@ stopBtn.onclick = () => {
       const voicemessageRef = db.ref("voiceMessages").push();
       await voicemessageRef.set(messageData);
 
-      alert(`Ayo will receive your voice message, thanks ${voicesendersName}! 🎤❤️`);
+      alert(`Ayo will receive your voice message, thanks ${voicesendersName}!❤️`);
+      location.reload()
 
       // Clear input fields
       audioPlayer.style.display = "none";
@@ -377,7 +378,8 @@ stopBtn.onclick = () => {
     await messageRef.set(theMessage);
 
     alert(`Ayo will receive your message, thanks ${sendersName}!❤️`);
-
+      location.reload()
+     
     // Clear fields
     document.getElementById("message").value = "";
     document.getElementById("sendersName").value = "";
@@ -392,6 +394,73 @@ stopBtn.onclick = () => {
   }
 }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
