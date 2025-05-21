@@ -437,8 +437,30 @@ function stopRecording() {
   startRecordingBtn.innerText = "🎬 Start Recording"
 
 videorecorder.onstop = () => {
+  let videoMimeType = "";
+
+if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
+  videoMimeType = "video/webm;codecs=vp9";
+} else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
+  videoMimeType = "video/webm;codecs=vp8";
+} else if (MediaRecorder.isTypeSupported("video/webm")) {
+  videoMimeType = "video/webm";
+} else if (MediaRecorder.isTypeSupported("video/mp4")) {
+  videoMimeType = "video/mp4";
+} else {
+  videoMimeType = ""; // Let browser decide
+}
+
+const videorecorder = new MediaRecorder(stream, { mimeType: videoMimeType });
+
+
+
+
+
   // Create a Blob from the recorded data
-  videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+  // videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+  videoBlob = new Blob(recordedChunks, { type: videoMimeType });
+
   const videoURL = URL.createObjectURL(videoBlob);
 
   // Switch the same video element from camera to recorded video
@@ -509,7 +531,7 @@ async function uploadVideo() {
  if (response.ok) {
   console.log("Uploaded to Cloudinary:", data.secure_url);
   const webmUrl = data.secure_url;
-  const videoURL = convertToMp4Url(webmUrl); // Get .mp4 preview version
+  const videoURL = convertToMp4Url(webmUrl); 
 
   const messageData = {
     videosendersName,
