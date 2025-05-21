@@ -409,16 +409,31 @@ let recordedChunks = [];
 let videoBlob = null;
  let videoMimeType;
 
-async function startRecording() {
-  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+const videoElement = document.getElementById('videoElement');
+const startRecordingBtn = document.getElementById('startRecordingBtn');
 
-  // const preview = document.getElementById('preview');
+async function startRecording() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert("getUserMedia not supported on this browser.");
+    return;
+  }
+
+  if (!window.MediaRecorder) {
+    alert("MediaRecorder not supported on this browser/device.");
+    return;
+  }
+
+  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  
   videoElement.srcObject = stream;
   videoElement.muted = true;
-  startRecordingBtn.innerText = "🎬 Recording..."
+  videoElement.play();
 
+  startRecordingBtn.innerText = "🎬 Recording...";
 
-  videoMimeType = "";
+  recordedChunks = [];
+
+  // Choose supported mime type for recording
   if (MediaRecorder.isTypeSupported("video/webm;codecs=vp9")) {
     videoMimeType = "video/webm;codecs=vp9";
   } else if (MediaRecorder.isTypeSupported("video/webm;codecs=vp8")) {
@@ -426,14 +441,11 @@ async function startRecording() {
   } else if (MediaRecorder.isTypeSupported("video/webm")) {
     videoMimeType = "video/webm";
   } else {
-    videoMimeType = ""; // Let browser decide
+    videoMimeType = "";
   }
 
+  videorecorder = new MediaRecorder(stream, videoMimeType ? { mimeType: videoMimeType } : undefined);
 
-
-  recordedChunks = [];
-
-  videorecorder = new MediaRecorder(stream);
   videorecorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
       recordedChunks.push(e.data);
@@ -443,54 +455,49 @@ async function startRecording() {
   videorecorder.start();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function stopRecording() {
   if (!videorecorder) return;
 
   videorecorder.stop();
 
-  startRecordingBtn.innerText = "🎬 Start Recording"
+  startRecordingBtn.innerText = "🎬 Start Recording";
 
   videorecorder.onstop = () => {
+    videoBlob = new Blob(recordedChunks, { type: videoMimeType || 'video/webm' });
+    const videoURL = URL.createObjectURL(videoBlob);
 
-    
+    // Stop the camera stream
+    if (videoElement.srcObject) {
+      videoElement.srcObject.getTracks().forEach(track => track.stop());
+    }
 
-  
-  // Create a Blob from the recorded data
-  // videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
-  videoBlob = new Blob(recordedChunks, { type: videoMimeType });
-
-  const videoURL = URL.createObjectURL(videoBlob);
-
-  // Switch the same video element from camera to recorded video
-  const videoElement = document.getElementById('videoElement');
-
-  // Stop the camera
-  if (videoElement.srcObject) {
-    videoElement.srcObject.getTracks().forEach(track => track.stop());
-  }
-
-  // Set the video source to the recorded blob
-  videoElement.srcObject = null;
-  videoElement.src = videoURL;
-  videoElement.controls = true;
-  videoElement.autoplay = false;
-  videoElement.muted = false;
-};
-
+    videoElement.srcObject = null;
+    videoElement.src = videoURL;
+    videoElement.controls = true;
+    videoElement.autoplay = false;
+    videoElement.muted = false;
+  };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function convertToMp4Url(webmUrl) {
   return webmUrl
