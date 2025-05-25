@@ -147,13 +147,20 @@
       font-size: 0.8rem;
     }
   
-    #container{
-      background-color: red;
-      /* height: 67vh; */
+    .holder{
+      /* background-color: red; */
+      height: 65vh;
       overflow-y: auto;
       border-radius: 20px;
     }
 
+    
+    .sender-message {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      word-spacing: 3px;
+      line-height: 20px;
+    }
 
 
         audio {
@@ -181,7 +188,7 @@
     <button onclick="showVoiceMessages()">Voice Messages</button>
 
 
-    <div id="container">
+    <div id="container" class="holder">
          <div id="messages"></div>
 
        <div id="voicemessages" style="display: none;"></div>
