@@ -231,7 +231,9 @@
   }
 
   function showVoiceMessages() {
-    loadVoiceMessages();
+    messagesbox.style.display = 'none'
+    voiceMessagesBox.style.display = "flex"
+
 
   }
 
@@ -299,39 +301,6 @@
     }
 });
 
-
-function loadVoiceMessages() {
-   voiceMessagesBox.innerHTML = ""
-   messagesbox.style.display = 'none'
-    voiceMessagesBox.style.display = "flex"
-   voicemessageRef.once("value").then((snapshot) => {
-    const data = snapshot.val();
-
-    if (data) {
-        Object.entries(data).forEach(([key, voicemessageObj]) => {
-
-             voiceMessagesBox.innerHTML += `
-             <div class="message-card">
-        <img id="senderpic" src=${voicemessageObj.imageUrl} alt="Sender Image" />
-        <div class="message-content">
-          <div class="sender-name">${voicemessageObj.voicesendersName}</div>
-          <div class="sender-message">
-            <audio src="${voicemessageObj.audioUrl}" controls></audio>
-            </div>
-    
-
-        </div>
-      </div>
-          `
-              
-  
-            console.log(`Name: ${voicemessageObj.voicesendersName}, Message: ${voicemessageObj.audioUrl}` );
-        });
-    } else {
-        console.log("No messages found.");
-    }
-});
-}
 
 
 
