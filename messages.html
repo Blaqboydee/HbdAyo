@@ -176,9 +176,20 @@
 
     #container::-webkit-scrollbar{
       display: none;
+
     }
+
+    .message-card{
+      /* background-color: red; */
+    }
+
+   
+
+
         audio {
-        width: 290px;
+        width: 250px;
+        border: none;
+        padding: 10px;
       }
 
       .message-card {
@@ -192,6 +203,7 @@
       }
 
          .sender-message {
+          width: 100%;
       font-size: 0.9rem;
       opacity: 0.9;
       word-spacing: 3px;
@@ -303,8 +315,10 @@
         <img id="senderpic" src=${voicemessageObj.imageUrl} alt="Sender Image" />
         <div class="message-content">
           <div class="sender-name">${voicemessageObj.voicesendersName}</div>
-          <div class="sender-message"></div>
-    <audio src="${voicemessageObj.audioUrl}" controls></audio>
+          <div class="sender-message">
+              <audio src="${voicemessageObj.audioUrl}" controls></audio>
+            </div>
+  
 
         </div>
       </div>
