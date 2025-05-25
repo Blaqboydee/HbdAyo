@@ -68,8 +68,6 @@
       box-shadow: 0 12px 25px rgba(0, 0, 0, 0.25);
     }
 
-
- 
  
    
 
@@ -109,7 +107,6 @@
 
     .message-content {
       flex: 1;
-
     }
 
     .sender-name {
@@ -125,52 +122,25 @@
       line-height: 20px;
     }
 
+    audio {
+  width: 100%;
+  /* width: 400px; */
+  border-radius: 15px;
+  background-color: #f0f0f0;
+  /* background: none; */
+  border: 1px solid black;
+  padding: 8px;
+}
+
 
     @media (max-width: 600px) {
-        h1 {
-      font-size: 1.5rem;
-      color: #b3acbb;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      -webkit-background-clip: text;
-      /* -webkit-text-fill-color: transparent; */
-      margin-bottom: 15px;
-    }
+      h1 {
+        font-size: 1.8rem;
+      }
 
- 
-
-
-       button {
-      background: linear-gradient(135deg, #ff6ec4, #7873f5);
-      border: none;
-      color: white;
-      padding: 15px 20px;
-      margin: 10px;
-      font-size: 0.8rem;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
-      font-family: "Poppins", sans-serif;
-
-    }
-
-
-      #container{
-      /* background-color: red; */
-      max-height: 67vh;
-      overflow-y: auto;
-      /* border: 1px solid black; */
-      border-radius: 20px;
-    }
-
-
-    #container::-webkit-scrollbar{
-      display: none;
-
-    }
-
-   
-
+        audio {
+        width: 200px;
+      }
 
       .message-card {
         flex-direction: column;
@@ -181,21 +151,13 @@
         width: 50px;
         height: 50px;
       }
-
-         .sender-message {
-          width: 100%;
-      font-size: 0.9rem;
-      opacity: 0.9;
-      word-spacing: 3px;
-      line-height: 20px;
-    }
     }
   </style>
 </head>
 <body>
   <div class="overlay"></div>
   <div class="content">
-    <h1>Happy Birthday, Ayomikun ❤ 🎉</h1>
+    <h1>Happy Birthday Ayomikun 🎉</h1>
 
     <button onclick="showTexts()">Texts</button>
     <button onclick="showVoiceMessages()">Voice Messages</button>
@@ -295,11 +257,8 @@
         <img id="senderpic" src=${voicemessageObj.imageUrl} alt="Sender Image" />
         <div class="message-content">
           <div class="sender-name">${voicemessageObj.voicesendersName}</div>
-          <div class="sender-message">
-            
-            </div>
-              <audio src="${voicemessageObj.audioUrl}" controls></audio>
-  
+          <div class="sender-message"></div>
+    <audio src="${voicemessageObj.audioUrl}" controls></audio>
 
         </div>
       </div>
