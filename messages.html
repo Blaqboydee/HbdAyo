@@ -188,7 +188,7 @@
     <button onclick="showVoiceMessages()">Voice Messages</button>
 
 
-    <div id="container" class="holder">
+    <div id="container">
          <div id="messages"></div>
 
        <div id="voicemessages" style="display: none;"></div>
@@ -282,8 +282,10 @@
         <img id="senderpic" src=${voicemessageObj.imageUrl} alt="Sender Image" />
         <div class="message-content">
           <div class="sender-name">${voicemessageObj.voicesendersName}</div>
-          <div class="sender-message"></div>
-    <audio src="${voicemessageObj.audioUrl}" controls></audio>
+          <div class="sender-message">
+            <audio src="${voicemessageObj.audioUrl}" controls></audio>
+            </div>
+    
 
         </div>
       </div>
